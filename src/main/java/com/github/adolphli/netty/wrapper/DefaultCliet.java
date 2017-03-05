@@ -20,7 +20,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 /**
  * Client 接口的默认实现类
- *
  */
 public class DefaultCliet implements Client {
 
@@ -58,11 +57,15 @@ public class DefaultCliet implements Client {
         channel.writeAndFlush(MessageUtil.convertToMessage(id, value));
 
         Message message = responseFuture.waitResponse(timeout);
-        return  MessageUtil.getTransferObject(message);
+        return MessageUtil.getTransferObject(message);
     }
 
     public Channel createChannel() throws Exception {
         ChannelFuture channelFuture = this.bootstrap.connect(serverAddress, port);
+        channelFuture.awaitUninterruptibly();
+        if (!channelFuture.isSuccess()) {
+            throw new Exception("Create Channel error.");
+        }
         return channelFuture.channel();
     }
 }
