@@ -61,10 +61,11 @@ public class DefaultCliet implements Client {
     }
 
     public Channel createChannel() throws Exception {
+        // bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000);
         ChannelFuture channelFuture = this.bootstrap.connect(serverAddress, port);
         channelFuture.awaitUninterruptibly();
         if (!channelFuture.isSuccess()) {
-            throw new Exception("Create Channel error.");
+            throw new Exception(channelFuture.cause());
         }
         return channelFuture.channel();
     }
